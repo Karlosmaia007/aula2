@@ -1,0 +1,21 @@
+@model WebMvc.Models.PessoaViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nome</th>
+        </tr>
+    </thead>     
+    <tbody>
+        @foreach(var item in Model.Items)
+        {
+            <tr>
+                <th>@item.Id</th>
+                <th>@item.Nome</th>
+            </tr>
+        }
+    </tbody> 
+</table>
