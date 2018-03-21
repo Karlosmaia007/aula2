@@ -5,14 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
- 
+
 namespace WebMvc.Controllers
 {
     public class PessoasController : Controller
     {
 
 
-           private static IList<Pessoa> PessoaList = new List<Pessoa>
+        private static IList<Pessoa> pessoaList = new List<Pessoa>
         {
             new Pessoa {Id = 1, Nome = "Joao"},
             new Pessoa {Id = 2, Nome = "Joao"},
@@ -21,18 +21,18 @@ namespace WebMvc.Controllers
 
 
 
-    // Actions
+        // Actions
 
-    // localhost:5000/pessoas
-    //localhost:5000/pessoas/Index
+        // localhost:5000/pessoas
+        //localhost:5000/pessoas/Index
         public IActionResult Index()
         {
             // busca dos dados
             //transforma dados em dados de visualização 
 
-            var viewModel  = new PessoaViewModel
+            var viewModel = new PessoaViewModel
             {
-                Items = PessoaList
+                Items = pessoaList
             };
             //visualizaçao dos dados 
             return View(viewModel);
@@ -43,20 +43,56 @@ namespace WebMvc.Controllers
 
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Nome")]Pessoa newPessoa)
         {
-            if(!ModelState.IsValid)
-            return View(newPessoa);
+            if (!ModelState.IsValid)
+                return View(newPessoa);
 
-            newPessoa.Id = PessoaList.Max(p => p.Id) + 1;
-            PessoaList.Add(newPessoa);
+            newPessoa.Id = pessoaList.Max(p => p.Id) + 1;
+            pessoaList.Add(newPessoa);
             return RedirectToAction(nameof(Index));
 
 
         }
+
+        public IActionResult Edit(int? id)
+        {
+            if (!id.HasValue)
+                return NotFound();
+
+            var pessoa = pessoaList
+                .FirstOrDefault(p => p.Id == id);
+
+            if (pessoa == null)
+                return NotFound();
+
+            return View(pessoa);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public IActionResult Edit(
+            [Bind("Id, Nome")]Pessoa editPessoa
+            )
+        {
+            if (!ModelState.IsValid)
+                return View(editPessoa);
+
+            var pessoaToEdit = pessoaList
+                .FirstOrDefault(p => p.Id == editPessoa.Id);
+
+            if (pessoaToEdit == null)
+                return NotFound();
+
+            pessoaToEdit.Nome = editPessoa.Nome;
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
     }
 }
